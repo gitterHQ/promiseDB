@@ -127,7 +127,6 @@ test('createDB', function (t){
     createDB({ name: dbName, version: 1, objects: [{ name: 'obj', indexes: [ {name: 'id', unique: true} ] }] })
       .then(function(db){
         t.ok(db, 'got the db okay');
-        console.log(db);
         var objStore = db.transaction(['obj'], 'readwrite').objectStore('obj');
         var hasIndex = objStore.indexNames.contains('id');
         t.assert(hasIndex, 'created index successfully');
