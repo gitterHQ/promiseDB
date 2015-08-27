@@ -1,12 +1,10 @@
-var path = require('path');
 var test = require('tape');
 var sinon = require('sinon');
-var uuid = require('node-uuid');
 var createDB = require('../lib/create-db');
+var getDBName = require('./helpers/get-db-name');
 
-function getDBName(){
-  return uuid.v1();
-}
+//bind a context so we can pass this to catches
+console.error = console.error.bind(console);
 
 test('createDB', function (t){
 
