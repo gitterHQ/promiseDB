@@ -107,10 +107,15 @@ test('createDB', function (t){
     var spy    = sinon.spy();
     createDB({ name: dbName, version: 1, objects: [ { name: 'test' } ]})
       .then(function(db){
+        db.close();
         return [db, createDB({ name: dbName, version: 2, objects: [ { name: 'test' } ]})];
       })
-      .catch(spy)
+      .catch(function(err){
+        console.log('ERROR', err);
+        spy();
+      })
       .spread(function(db1, db2){
+        console.log('got dbs', db1, db2);
         t.ok(db1, 'got old db back okay');
         t.ok(db2, 'got new db back okay');
         t.equal(spy.callCount, 0, 'error was not thrown');
