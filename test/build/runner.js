@@ -83,6 +83,22 @@ module.exports = function addToDB(db, storeName, obj){
     if(!obj)
       return reject(new Error('A valid object must be passed to addToDB'));
 
+    //If we have an object PUT it into the database
+    if(obj.length === undefined){
+      return addObjToDb(db, storeName, obj).then(resolve).catch(reject);
+    }
+
+    //we have a collection with at leaast on item
+    if(!!obj.length){
+      return addCollectionToDb(db, storeName, obj).then(resolve).catch(reject);
+    }
+
+  });
+};
+
+
+function addObjToDb(db, storeName, obj) {
+  return Q.Promise(function(resolve, reject){
     var objStore = db.transaction([storeName], 'readwrite').objectStore(storeName);
     var request  = objStore.put(obj);
 
@@ -93,9 +109,24 @@ module.exports = function addToDB(db, storeName, obj){
     request.onerror = function (e){
       reject(e.target.error);
     };
-
   });
-};
+}
+
+function addCollectionToDb(db, storeName, collection){
+  return Q.Promise(function(resolve, reject){
+    //if the collection is empty resolve
+    if(!collection.length) return resolve();
+    //splice off the object so we can recursively call this
+    var obj = collection.splice(0, 1)[0];
+    return addObjToDb(db, storeName, obj)
+      .then(function(){
+        //recursively call this
+        return addCollectionToDb(db, storeName, collection);
+      })
+      //resolve when finished reject any errors
+      .then(resolve).catch(reject);
+  });
+}
 
 },{"q":32}],3:[function(require,module,exports){
 
@@ -15551,7 +15582,6 @@ var addToDB   = require('../lib/put-db');
 
 console.error = console.error.bind(console);
 
-
 test('addToDB', function (t){
 
   test('Will reject if no DB is passed', function (t){
@@ -15655,6 +15685,41 @@ test('addToDB', function (t){
     })
     .catch(console.error);
   });
+
+  test('Should add a collection the database', function (t){
+    var dataBase;
+    var dbName = getDBName();
+    createDB({
+      name: dbName, version: 1, objects: [{
+        name: 'obj1'
+      }]
+    })
+    .then(function(db){
+      dataBase = db;
+      return [db, addToDB(db, 'obj1', [{ id: 1, prop: 'test' }, { id: 2, prop: 'test2'}])];
+    })
+    //Getting things out of the db like ths is gross
+    .spread(function(db){
+      //get the first object out of the database
+      db.transaction(['obj1'])
+        .objectStore('obj1')
+        .get(1)
+        .onsuccess = function(e){
+          t.equal(e.target.result.prop, 'test', 'The first object pulled from the DB is as expected');
+          //get the second object out of the database
+          db.transaction(['obj1'])
+            .objectStore('obj1')
+            .get(2)
+            .onsuccess = function(e){
+              t.equal(e.target.result.prop, 'test2');
+              t.end();
+              cleanDB(db);
+            };
+        };
+    })
+    .catch(console.error);
+  });
+
 
   t.end();
 });

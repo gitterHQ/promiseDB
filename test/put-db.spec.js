@@ -7,7 +7,6 @@ var addToDB   = require('../lib/put-db');
 
 console.error = console.error.bind(console);
 
-
 test('addToDB', function (t){
 
   test('Will reject if no DB is passed', function (t){
@@ -111,6 +110,41 @@ test('addToDB', function (t){
     })
     .catch(console.error);
   });
+
+  test('Should add a collection the database', function (t){
+    var dataBase;
+    var dbName = getDBName();
+    createDB({
+      name: dbName, version: 1, objects: [{
+        name: 'obj1'
+      }]
+    })
+    .then(function(db){
+      dataBase = db;
+      return [db, addToDB(db, 'obj1', [{ id: 1, prop: 'test' }, { id: 2, prop: 'test2'}])];
+    })
+    //Getting things out of the db like ths is gross
+    .spread(function(db){
+      //get the first object out of the database
+      db.transaction(['obj1'])
+        .objectStore('obj1')
+        .get(1)
+        .onsuccess = function(e){
+          t.equal(e.target.result.prop, 'test', 'The first object pulled from the DB is as expected');
+          //get the second object out of the database
+          db.transaction(['obj1'])
+            .objectStore('obj1')
+            .get(2)
+            .onsuccess = function(e){
+              t.equal(e.target.result.prop, 'test2');
+              t.end();
+              cleanDB(db);
+            };
+        };
+    })
+    .catch(console.error);
+  });
+
 
   t.end();
 });
