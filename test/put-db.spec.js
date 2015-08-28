@@ -3,7 +3,7 @@ var sinon     = require('sinon');
 var getDBName = require('./helpers/get-db-name');
 var cleanDB   = require('./helpers/clean-db');
 var createDB  = require('../lib/create-db');
-var addToDB   = require('../lib/add-to-db');
+var addToDB   = require('../lib/put-db');
 
 console.error = console.error.bind(console);
 
