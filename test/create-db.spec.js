@@ -1,6 +1,6 @@
-var test = require('tape');
-var sinon = require('sinon');
-var createDB = require('../lib/create-db');
+var test      = require('tape');
+var sinon     = require('sinon');
+var createDB  = require('../lib/create-db');
 var getDBName = require('./helpers/get-db-name');
 
 //bind a context so we can pass this to catches
@@ -70,7 +70,7 @@ test('createDB', function (t){
   });
 
   test('Will resolve with different db\'s if called twice with different params', function (t){
-    var dbName = getDBName();
+    var dbName  = getDBName();
     var dbName2 = getDBName();
     createDB({ name: dbName, version: 1})
       .then(function(db){
@@ -104,7 +104,7 @@ test('createDB', function (t){
 
   test('Should not throw errors when creating the same object stores on different versions', function (t){
     var dbName = getDBName();
-    var spy = sinon.spy();
+    var spy    = sinon.spy();
     createDB({ name: dbName, version: 1, objects: [ { name: 'test' } ]})
       .then(function(db){
         return [db, createDB({ name: dbName, version: 2, objects: [ { name: 'test' } ]})];
