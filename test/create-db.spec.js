@@ -2,6 +2,7 @@ var test      = require('tape');
 var sinon     = require('sinon');
 var createDB  = require('../lib/create-db');
 var getDBName = require('./helpers/get-db-name');
+var cleanDB   = require('./helpers/clean-db');
 
 //bind a context so we can pass this to catches
 console.error = console.error.bind(console);
@@ -47,7 +48,7 @@ test('createDB', function (t){
       .then( function (db){
         t.ok(db, 'DB is truthy');
         t.assert(db instanceof IDBDatabase, 'returned DB is an instanceof IDBDatabase');
-        indexedDB.deleteDatabase(dbName);
+        cleanDB(db);
         t.end();
       })
       .catch(console.error);
@@ -63,7 +64,7 @@ test('createDB', function (t){
         t.ok(db1, 'first DB returned okay');
         t.ok(db2, 'second DB returned okay');
         t.equal(db1.name, db2.name, 'both returned DBs are the same');
-        indexedDB.deleteDatabase(dbName);
+        cleanDB(db1, db2);
         t.end();
       })
       .catch(console.error);
@@ -80,8 +81,7 @@ test('createDB', function (t){
         t.ok(db1, 'first DB returned okay');
         t.ok(db2, 'second DB returned okay');
         t.notEqual(db1.name, db2.name, 'both DBs returned are different');
-        indexedDB.deleteDatabase(dbName);
-        indexedDB.deleteDatabase(dbName2);
+        cleanDB(db1, db2);
         t.end();
       })
       .catch(console.error);
@@ -96,7 +96,7 @@ test('createDB', function (t){
         var resultLength = db.objectStoreNames.length;
         t.equal(resultLength, 1, 'only one object store created');
         t.ok(resultObj, 'returned DB has the correct object stores');
-        indexedDB.deleteDatabase(dbName);
+        cleanDB(db);
         t.end();
       })
       .catch(console.error);
@@ -114,7 +114,7 @@ test('createDB', function (t){
         t.ok(db1, 'got old db back okay');
         t.ok(db2, 'got new db back okay');
         t.equal(spy.callCount, 0, 'error was not thrown');
-        indexedDB.deleteDatabase(dbName);
+        cleanDB(db1, db2);
         t.end();
       })
       .catch(console.error);
@@ -128,7 +128,7 @@ test('createDB', function (t){
         var objStore = db.transaction(['obj'], 'readwrite').objectStore('obj');
         var hasIndex = objStore.indexNames.contains('id');
         t.assert(hasIndex, 'created index successfully');
-        indexedDB.deleteDatabase(dbName);
+        cleanDB(db);
         t.end();
       })
       .catch(console.error);
