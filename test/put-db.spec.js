@@ -12,7 +12,9 @@ console.error = !!console.error ? console.error.bind(console) : function(){};
 test('addToDB', function (t){
 
   test('Will reject if no DB is passed', function (t){
+
     var spy = sinon.spy();
+
     addToDB()
       .catch(spy)
       .then(function(){
@@ -23,7 +25,9 @@ test('addToDB', function (t){
   });
 
   test('Will reject if an invalid db is passed', function (t){
+
     var spy = sinon.spy();
+
     addToDB({db: true})
       .catch(spy)
       .then(function (){
@@ -34,9 +38,11 @@ test('addToDB', function (t){
   });
 
   test('Will reject if no object store is passed', function (t){
+
     var dataBase;
     var spy    = sinon.spy();
     var dbName = getDBName();
+
     createDB({ name: dbName, version: 1 })
       .then(function(db){
         t.ok(db, 'db created successfully');
@@ -53,9 +59,11 @@ test('addToDB', function (t){
   });
 
   test('Will reject if an invalid object store name is passed', function (t){
+
     var dataBase;
     var dbName = getDBName();
     var spy    = sinon.spy();
+
     createDB({ name: dbName, version: 1, objects: [{ name: 'obj1' }] })
       .then(function(db){
         dataBase = db;
@@ -71,9 +79,11 @@ test('addToDB', function (t){
   });
 
   test('Will reject if no object is passed', function (t){
+
     var dataBase;
     var dbName = getDBName();
     var spy    = sinon.spy();
+
     createDB({ name: dbName, version: 1, objects: [{ name: 'obj1' }] })
       .then(function(db){
         dataBase = db;
@@ -89,8 +99,10 @@ test('addToDB', function (t){
   });
 
   test('Should add an object to the database', function (t){
+
     var dataBase;
     var dbName = getDBName();
+
     createDB({
       name: dbName, version: 1, objects: [{
         name: 'obj1'
@@ -114,8 +126,10 @@ test('addToDB', function (t){
   });
 
   test('Should add a collection the database', function (t){
+
     var dataBase;
     var dbName = getDBName();
+
     createDB({
       name: dbName, version: 1, objects: [{
         name: 'obj1'
@@ -146,7 +160,6 @@ test('addToDB', function (t){
     })
     .catch(console.error);
   });
-
 
   t.end();
 });
