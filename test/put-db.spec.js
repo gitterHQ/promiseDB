@@ -5,7 +5,9 @@ var cleanDB   = require('./helpers/clean-db');
 var createDB  = require('../lib/create-db');
 var addToDB   = require('../lib/put-db');
 
-console.error = console.error.bind(console);
+//bind a context so we can pass this to catches
+var console = (window.console || {});
+console.error = !!console.error ? console.error.bind(console) : function(){};
 
 test('addToDB', function (t){
 

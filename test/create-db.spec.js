@@ -5,7 +5,8 @@ var getDBName = require('./helpers/get-db-name');
 var cleanDB   = require('./helpers/clean-db');
 
 //bind a context so we can pass this to catches
-console.error = console.error.bind(console);
+var console = (window.console || {});
+console.error = !!console.error ? console.error.bind(console) : function(){};
 
 test('createDB', function (t){
 
