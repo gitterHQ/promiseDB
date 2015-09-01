@@ -1,8 +1,8 @@
 var test      = require('tape');
 var sinon     = require('sinon');
-var createDB  = require('../lib/create-db');
-var getDBName = require('./helpers/get-db-name');
-var cleanDB   = require('./helpers/clean-db');
+var createDB  = require('../../lib/create-db');
+var getDBName = require('../helpers/get-db-name');
+var cleanDB   = require('../helpers/clean-db');
 
 //bind a context so we can pass this to catches
 var console = (window.console || {});

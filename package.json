@@ -4,11 +4,11 @@
   "description": "A promise wrapper for indexedDB",
   "main": "index.js",
   "scripts": {
-    "http:server":"http-server ./test -p 9090",
-    "test:watch":"npm run test:watch:dev & npm run test:watch:runner",
-    "test:watch:dev": "hihat test/*.js -p tap-dev-tool",
-    "test:build:runner": "browserify ./test/*.js > test/build/runner.js",
-    "test:watch:runner": "npm run http:server & watchify ./test/*.js -o test/build/runner.js"
+    "http:server": "http-server -p 9090",
+    "test:watch": "npm run test:watch:dev & npm run test:watch:runner",
+    "test:watch:dev": "hihat test/specs/*.js --print | tap-spec",
+    "test:build:runner": "browserify ./test/specs/*.js > build/runner.js",
+    "test:watch:runner": "npm run http:server & watchify ./test/specs/*.js -o build/runner.js"
   },
   "keywords": [
     "indexedDB"
@@ -25,6 +25,7 @@
     "node-uuid": "^1.4.3",
     "sinon": "^1.16.1",
     "tap-dev-tool": "^1.3.0",
+    "tap-spec": "^4.1.0",
     "tape": "^4.2.0",
     "watchify": "^3.3.1"
   }
