@@ -10,7 +10,7 @@ console.error = !!console.error ? console.error.bind(console) : function(){};
 
 test('createDB', function (t){
 
-  test('Will reject if no configuration object is passed', function (t){
+  test('Should reject if no configuration object is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -23,7 +23,7 @@ test('createDB', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if no name is passed', function (t){
+  test('Should reject if no name is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -36,7 +36,7 @@ test('createDB', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if no version is passed', function (t){
+  test('Should reject if no version is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -49,7 +49,7 @@ test('createDB', function (t){
       .catch(console.error);
   });
 
-  test('Will resolve with a valid indexDB instance', function (t){
+  test('Should resolve with a valid indexDB instance', function (t){
 
     var dbName = getDBName();
 
@@ -63,7 +63,7 @@ test('createDB', function (t){
       .catch(console.error);
   });
 
-  test('Will resolve with the same db if called twice', function (t){
+  test('Should resolve with the same db if called twice', function (t){
 
     var dbName = getDBName();
 
@@ -81,7 +81,7 @@ test('createDB', function (t){
       .catch(console.error);
   });
 
-  test('Will resolve with different db\'s if called twice with different params', function (t){
+  test('Should resolve with different db\'s if called twice with different params', function (t){
 
     var dbName  = getDBName();
     var dbName2 = getDBName();

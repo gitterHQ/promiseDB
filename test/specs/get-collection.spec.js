@@ -1,18 +1,18 @@
-var test      = require('tape');
-var sinon     = require('sinon');
-var getDBName = require('../helpers/get-db-name');
-var cleanDB   = require('../helpers/clean-db');
-var createDB  = require('../../lib/create-db');
-var addToDB   = require('../../lib/put-db');
+var test          = require('tape');
+var sinon         = require('sinon');
+var getDBName     = require('../helpers/get-db-name');
+var cleanDB       = require('../helpers/clean-db');
+var createDB      = require('../../lib/create-db');
+var addToDB       = require('../../lib/put-db');
 var getCollection = require('../../lib/get-collection-db');
 
 //bind a context so we can pass this to catches
-var console = (window.console || {});
+var console   = (window.console || {});
 console.error = !!console.error ? console.error.bind(console) : function(){};
 
 test('getCollection()', function (t){
 
-  test('Will reject if no DB is passed', function (t){
+  test('Should reject if no DB is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -25,7 +25,7 @@ test('getCollection()', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if an invalid DB is passed', function (t){
+  test('Should reject if an invalid DB is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -38,7 +38,7 @@ test('getCollection()', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if no storeName is passed', function (t){
+  test('Should reject if no storeName is passed', function (t){
 
     var dataBase;
     var spy = sinon.spy();
@@ -116,7 +116,6 @@ test('getCollection()', function (t){
       })
       .catch(console.error);
   });
-
 
   t.end();
 });

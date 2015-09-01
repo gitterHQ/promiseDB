@@ -11,7 +11,7 @@ console.error = !!console.error ? console.error.bind(console) : function(){};
 
 test('addToDB', function (t){
 
-  test('Will reject if no DB is passed', function (t){
+  test('Should reject if no DB is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -24,7 +24,7 @@ test('addToDB', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if an invalid db is passed', function (t){
+  test('Should reject if an invalid db is passed', function (t){
 
     var spy = sinon.spy();
 
@@ -37,7 +37,7 @@ test('addToDB', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if no object store is passed', function (t){
+  test('Should reject if no object store is passed', function (t){
 
     var dataBase;
     var spy    = sinon.spy();
@@ -58,7 +58,7 @@ test('addToDB', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if an invalid object store name is passed', function (t){
+  test('Should reject if an invalid object store name is passed', function (t){
 
     var dataBase;
     var dbName = getDBName();
@@ -78,7 +78,7 @@ test('addToDB', function (t){
       .catch(console.error);
   });
 
-  test('Will reject if no object is passed', function (t){
+  test('Should reject if no object is passed', function (t){
 
     var dataBase;
     var dbName = getDBName();

@@ -22,6 +22,7 @@
     "browserify": "^11.0.1",
     "hihat": "^2.4.1",
     "http-server": "^0.8.0",
+    "indexeddbshim": "^2.2.1",
     "node-uuid": "^1.4.3",
     "sinon": "^1.16.1",
     "tap-dev-tool": "^1.3.0",
