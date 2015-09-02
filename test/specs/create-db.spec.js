@@ -1,5 +1,4 @@
 var assert    = require('assert');
-var test      = require('tape');
 var sinon     = require('sinon');
 var createDB  = require('../../lib/create-db');
 var getDBName = require('../helpers/get-db-name');
