@@ -1,3 +1,4 @@
+var assert    = require('assert');
 var test      = require('tape');
 var sinon     = require('sinon');
 var createDB  = require('../../lib/create-db');
@@ -8,151 +9,165 @@ var cleanDB   = require('../helpers/clean-db');
 var console = (window.console || {});
 console.error = !!console.error ? console.error.bind(console) : function(){};
 
-test('createDB', function (t){
+describe('createDB', function (){
 
-  test('Should reject if no configuration object is passed', function (t){
+  describe('The arguments', function (){
 
-    var spy = sinon.spy();
+    it('Should reject if no configuration object is passed', function (done){
 
-    createDB()
-      .catch(spy)
-      .then(function(){
-        t.assert(spy.calledOnce, 'createDB promise was rejected');
-        t.end();
-      })
-      .catch(console.error);
+      var spy = sinon.spy();
+
+      createDB()
+        .catch(spy)
+        .then(function(){
+          assert(spy.calledOnce, 'createDB promise was rejected');
+          done();
+        })
+        .catch(console.error);
+    });
+
+    it('Should reject if no name is passed', function (done){
+
+      var spy = sinon.spy();
+
+      createDB({})
+        .catch(spy)
+        .then(function(){
+          assert(spy.calledOnce, 'createDB promise was rejected');
+          done();
+        })
+        .catch(console.error);
+    });
+
+    it('Should reject if no version is passed', function (done){
+
+      var spy = sinon.spy();
+
+      createDB({ name: getDBName() })
+        .catch(spy)
+        .then(function(){
+          assert(spy.calledOnce, 'createDB promise was rejected');
+          done();
+        })
+        .catch(console.error);
+    });
+
   });
 
-  test('Should reject if no name is passed', function (t){
+  describe('Database resolution', function (){
 
-    var spy = sinon.spy();
+    it('Should resolve with a valid indexDB instance', function (done){
 
-    createDB({})
-      .catch(spy)
-      .then(function(){
-        t.assert(spy.calledOnce, 'createDB promise was rejected');
-        t.end();
-      })
-      .catch(console.error);
+      var dbName = getDBName();
+
+      createDB({ name: dbName, version: 1})
+        .then( function (db){
+          assert(db, 'DB is truthy');
+          assert(db instanceof IDBDatabase, 'returned DB is an instanceof IDBDatabase');
+          cleanDB(db);
+          done();
+        })
+        .catch(console.error);
+    });
+
+    it('Should resolve with the same db if called twice', function (done){
+
+      var dbName = getDBName();
+
+      createDB({ name: dbName, version: 1})
+        .then(function(db){
+          return [db, createDB({ name: dbName, version: 1})];
+        })
+        .spread(function(db1, db2){
+          assert(db1, 'first DB returned okay');
+          assert(db2, 'second DB returned okay');
+          assert.equal(db1.name, db2.name, 'both returned DBs are the same');
+          cleanDB(db1, db2);
+          done();
+        })
+        .catch(console.error);
+    });
+
+    it('Should resolve with different db\'s if called twice with different params', function (done){
+
+      var dbName  = getDBName();
+      var dbName2 = getDBName();
+
+      createDB({ name: dbName, version: 1})
+        .then(function(db){
+          return [db, createDB({ name: dbName2, version: 1})];
+        })
+        .spread(function(db1, db2){
+          assert(db1, 'first DB returned okay');
+          assert(db2, 'second DB returned okay');
+          assert.notEqual(db1.name, db2.name, 'both DBs returned are different');
+          cleanDB(db1, db2);
+          done();
+        })
+        .catch(console.error);
+    });
+
   });
 
-  test('Should reject if no version is passed', function (t){
+  describe('Creating object stores', function (){
 
-    var spy = sinon.spy();
+    it('Should create object stores when passed within the configuration', function (done){
 
-    createDB({ name: getDBName() })
-      .catch(spy)
-      .then(function(){
-        t.assert(spy.calledOnce, 'createDB promise was rejected');
-        t.end();
-      })
-      .catch(console.error);
+      var dbName = getDBName();
+
+      createDB({ name: dbName, version: 1, objects: [{ name: 'test'}] })
+        .then(function(db){
+          assert(db, 'DB returned okay');
+          var resultObj = db.objectStoreNames.contains('test');
+          var resultLength = db.objectStoreNames.length;
+          assert.equal(resultLength, 1, 'only one object store created');
+          assert(resultObj, 'returned DB has the correct object stores');
+          cleanDB(db);
+          done();
+        })
+        .catch(console.error);
+    });
+
+    it('Should not throw errors when creating the same object stores on different versions', function (done){
+
+      var dbName = getDBName();
+      var spy    = sinon.spy();
+
+      createDB({ name: dbName, version: 1, objects: [ { name: 'test' } ]})
+        .then(function(db){
+          db.close();
+          return [db, createDB({ name: dbName, version: 2, objects: [ { name: 'test' } ]})];
+        })
+        .catch(spy)
+        .spread(function(db1, db2){
+          assert(db1, 'got old db back okay');
+          assert(db2, 'got new db back okay');
+          assert.equal(spy.callCount, 0, 'error was not thrown');
+          cleanDB(db1, db2);
+          done();
+        })
+        .catch(console.error);
+    });
+
   });
 
-  test('Should resolve with a valid indexDB instance', function (t){
+  describe('Creating indexes', function (){
 
-    var dbName = getDBName();
+    it('Should create indexes on the DB if specified', function (done){
 
-    createDB({ name: dbName, version: 1})
-      .then( function (db){
-        t.ok(db, 'DB is truthy');
-        t.assert(db instanceof IDBDatabase, 'returned DB is an instanceof IDBDatabase');
-        cleanDB(db);
-        t.end();
-      })
-      .catch(console.error);
+      var dbName = getDBName();
+
+      createDB({ name: dbName, version: 1, objects: [{ name: 'obj', indexes: [ {name: 'id', unique: true} ] }] })
+        .then(function(db){
+          assert(db, 'got the db okay');
+          var objStore = db.transaction(['obj'], 'readwrite').objectStore('obj');
+          var hasIndex = objStore.indexNames.contains('id');
+          assert(hasIndex, 'created index successfully');
+          cleanDB(db);
+          done();
+        })
+        .catch(console.error);
+    });
   });
 
-  test('Should resolve with the same db if called twice', function (t){
-
-    var dbName = getDBName();
-
-    createDB({ name: dbName, version: 1})
-      .then(function(db){
-        return [db, createDB({ name: dbName, version: 1})];
-      })
-      .spread(function(db1, db2){
-        t.ok(db1, 'first DB returned okay');
-        t.ok(db2, 'second DB returned okay');
-        t.equal(db1.name, db2.name, 'both returned DBs are the same');
-        cleanDB(db1, db2);
-        t.end();
-      })
-      .catch(console.error);
-  });
-
-  test('Should resolve with different db\'s if called twice with different params', function (t){
-
-    var dbName  = getDBName();
-    var dbName2 = getDBName();
-
-    createDB({ name: dbName, version: 1})
-      .then(function(db){
-        return [db, createDB({ name: dbName2, version: 1})];
-      })
-      .spread(function(db1, db2){
-        t.ok(db1, 'first DB returned okay');
-        t.ok(db2, 'second DB returned okay');
-        t.notEqual(db1.name, db2.name, 'both DBs returned are different');
-        cleanDB(db1, db2);
-        t.end();
-      })
-      .catch(console.error);
-  });
-
-  test('Should create object stores when passed within the configuration', function (t){
-
-    var dbName = getDBName();
-
-    createDB({ name: dbName, version: 1, objects: [{ name: 'test'}] })
-      .then(function(db){
-        t.ok(db, 'DB returned okay');
-        var resultObj = db.objectStoreNames.contains('test');
-        var resultLength = db.objectStoreNames.length;
-        t.equal(resultLength, 1, 'only one object store created');
-        t.ok(resultObj, 'returned DB has the correct object stores');
-        cleanDB(db);
-        t.end();
-      })
-      .catch(console.error);
-  });
-
-  test('Should not throw errors when creating the same object stores on different versions', function (t){
-
-    var dbName = getDBName();
-    var spy    = sinon.spy();
-
-    createDB({ name: dbName, version: 1, objects: [ { name: 'test' } ]})
-      .then(function(db){
-        db.close();
-        return [db, createDB({ name: dbName, version: 2, objects: [ { name: 'test' } ]})];
-      })
-      .catch(spy)
-      .spread(function(db1, db2){
-        t.ok(db1, 'got old db back okay');
-        t.ok(db2, 'got new db back okay');
-        t.equal(spy.callCount, 0, 'error was not thrown');
-        cleanDB(db1, db2);
-        t.end();
-      })
-      .catch(console.error);
-  });
-
-  test('Should create indexes on the DB if specified', function (t){
-
-    var dbName = getDBName();
-
-    createDB({ name: dbName, version: 1, objects: [{ name: 'obj', indexes: [ {name: 'id', unique: true} ] }] })
-      .then(function(db){
-        t.ok(db, 'got the db okay');
-        var objStore = db.transaction(['obj'], 'readwrite').objectStore('obj');
-        var hasIndex = objStore.indexNames.contains('id');
-        t.assert(hasIndex, 'created index successfully');
-        cleanDB(db);
-        t.end();
-      })
-      .catch(console.error);
-  });
-
-  t.end();
 });
