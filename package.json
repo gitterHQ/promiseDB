@@ -1,10 +1,11 @@
 {
-  "name": "indexdb-promises",
+  "name": "promise-db",
   "version": "1.0.0",
   "description": "A promise wrapper for indexedDB",
   "main": "index.js",
   "scripts": {
     "http:server": "http-server -p 9090",
+    "test": "browserstack-runner",
     "test:watch": "npm run test:watch:runner",
     "test:build:runner": "browserify ./test/specs/*.js > build/runner.js",
     "test:watch:runner": "npm run http:server & watchify ./test/specs/*.js -o build/runner.js"
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "browserify": "^11.0.1",
+    "browserstack-runner": "^0.3.7",
     "http-server": "^0.8.0",
     "indexeddbshim": "^2.2.1",
     "node-uuid": "^1.4.3",

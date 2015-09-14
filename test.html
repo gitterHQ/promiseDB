@@ -3,18 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>IndexedDB Promise API</title>
+  <!-- Mocha styles -->
   <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+
+  <!-- Mocha JS-->
   <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
   <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
   <script src="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.js"></script>
   <script>mocha.setup('bdd')</script>
+
+  <!-- Tests -->
   <script src='build/runner.js'></script>
 </head>
 <body>
 <div id="mocha"></div>
 <script>
   mocha.checkLeaks();
-  mocha.run();
+  mocha.globals(['console', '_console_log', 'BrowserStack']);
+  window.onload = function(){
+    console.log('STARTED');
+    mocha.run(function(){
+        console.log('FINISHED');
+        mocha.bail();
+    });
+  }
 </script>
 </body>
 </html>

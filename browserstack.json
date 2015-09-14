@@ -1,0 +1,31 @@
+{
+    "username": "BROWSERSTACK_USERNAME",
+    "key": "BROWSERSTACK_KEY",
+    "test_path": "test.html",
+    "test_framework": "mocha",
+    "browsers": [
+        {
+            "browser": "firefox",
+            "browser_version": "latest",
+            "os": "OS X",
+            "os_version": "Yosemite"
+        },
+        {
+            "browser": "chrome",
+            "browser_version": "latest",
+            "os": "OS X",
+            "os_version": "Yosemite"
+        },
+        {
+            "browser": "firefox",
+            "browser_version": "latest",
+            "os": "Windows",
+            "os_version": "8.1"
+        },
+        {
+            "browser": "chrome",
+            "browser_version": "latest",
+            "os": "Windows",
+            "os_version": "8.1"
+        }    ]
+}
