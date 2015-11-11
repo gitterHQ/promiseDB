@@ -9,6 +9,22 @@ Usage:
 1, Create a database instance
 
 ```js
-createDB({ name: 'database-name', version: 1 })
+var promiseDB = require('promise-db');
+
+promiseDB
+  .createDB({ name: 'database-name', version: 1 })
   .then(function(db){ /* Here lies a fully valid indexed-db instace */ });
+```
+
+
+2, Add an object to the database
+
+```js
+var promiseDB = require('promise-db');
+
+promiseDB
+  .createDB({ name: 'database-name', version: 1, objects: [ {name: 'store'} ] })
+  .then(function(db){
+    return promiseDB.put(db, 'store', { testObj: 'some-value-goes-here' });
+  });
 ```
