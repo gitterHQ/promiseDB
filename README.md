@@ -23,6 +23,7 @@ promiseDB
 var promiseDB = require('promise-db');
 
 promiseDB
+  //the objects key in dbConfig represents the objects stores you wish to create in indexed-db
   .createDB({ name: 'database-name', version: 1, objects: [ {name: 'store'} ] })
   .then(function(db){
     return promiseDB.put(db, 'store', { testObj: 'some-value-goes-here' });
