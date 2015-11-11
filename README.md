@@ -28,5 +28,24 @@ promiseDB
   .createDB({ name: 'database-name', version: 1, objects: [ {name: 'store'} ] })
   .then(function(db){
     return promiseDB.put(db, 'store', { testObj: 'some-value-goes-here' });
+  })
+  .then(function(obj){
+    //the object saved is now returned
+  });
+```
+
+3, Get a single object from the database
+```js
+
+var promiseDB = require('promise-db');
+
+promiseDB
+  .createDB({ name: 'database-name', version: 1, objects: [ {name: 'store'} ] })
+  .then(function(db){
+    //you need to pass your database, store name and id
+    return promiseDB.get(db, 'store', 1);
+  })
+  .then(function(obj){
+    /* here is your object */
   });
 ```

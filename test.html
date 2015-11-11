@@ -20,13 +20,7 @@
 <script>
   mocha.checkLeaks();
   mocha.globals(['console', '_console_log', 'BrowserStack']);
-  window.onload = function(){
-    console.log('STARTED');
-    mocha.run(function(){
-        console.log('FINISHED');
-        mocha.bail();
-    });
-  }
+  window.onload = function(){ mocha.run(function(){ mocha.bail();}); };
 </script>
 </body>
 </html>

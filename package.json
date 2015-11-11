@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "http:server": "http-server -p 9090",
-    "test": "browserstack-runner",
+    "test": "browserstack-runner --verbose",
     "test:watch": "npm run test:watch:runner",
     "test:build:runner": "browserify ./test/specs/*.js > build/runner.js",
     "test:watch:runner": "npm run http:server & watchify ./test/specs/*.js -o build/runner.js"

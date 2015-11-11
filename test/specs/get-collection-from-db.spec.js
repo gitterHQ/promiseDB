@@ -128,7 +128,6 @@ describe('getCollectionFrom()', function (done){
           ])];
         })
         .spread(function (db){
-          console.log('added');
           return [db, getCollectionFrom(db, 'obj1', 2, null, 'prev')];
         })
         .spread( function (db, collection){
@@ -161,7 +160,6 @@ describe('getCollectionFrom()', function (done){
           ])];
         })
         .spread(function (db){
-          console.log('added');
           return [db, getCollectionFrom(db, 'obj1', 3, null, 'prev', 'lowerBound')];
         })
         .spread( function (db, collection){
